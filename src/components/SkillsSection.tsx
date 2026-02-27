@@ -3,13 +3,13 @@ import { Wind, Cpu, Box, PenTool, Layers, Gauge } from "lucide-react";
 
 const skills = [
   { name: "STAR-CCM+", level: "Advanced", icon: Wind },
-  { name: "OpenFOAM", level: "Intermediate", icon: Layers },
-  { name: "SolidWorks", level: "Advanced", icon: Box },
+  { name: "SolidWorks", level: "Proficient", icon: Box },
   { name: "ANSYS", level: "Proficient", icon: Gauge },
   { name: "3D Printing", level: "Proficient", icon: Cpu },
   { name: "AutoCAD", level: "Proficient", icon: PenTool },
-  { name: "CFD", level: "Advanced", icon: Wind },
-  { name: "FEA", level: "Proficient", icon: Cpu },
+  { name: "CFD", level: "Proficient", icon: Wind },
+  { name: "OpenFOAM", level: "Beginner", icon: Layers },
+  { name: "FEA", level: "Beginner", icon: Cpu },
 ];
 
 const SkillsSection = () => (
