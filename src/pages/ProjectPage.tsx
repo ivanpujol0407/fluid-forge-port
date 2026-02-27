@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar, User } from "lucide-react";
@@ -10,6 +11,7 @@ import Footer from "@/components/Footer";
 const ProjectPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  useEffect(() => { window.scrollTo(0, 0); }, [id]);
   const project = projectsData.find((p) => p.id === id);
 
   if (!project) {
