@@ -8,6 +8,17 @@ import { projectsData } from "@/data/projectsData";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
+// Speedway images
+import geometryImg from "@/assets/speedway/geometry.png";
+import domainImg from "@/assets/speedway/domain.png";
+import meshPrismImg from "@/assets/speedway/mesh-prism.png";
+import windTunnelSetupImg from "@/assets/speedway/wind-tunnel-setup.jpg";
+import cpContourImg from "@/assets/speedway/cp-contour.png";
+import cpLegendImg from "@/assets/speedway/cp-legend.png";
+import meanVelocityImg from "@/assets/speedway/mean-velocity.png";
+import velocityLegendImg from "@/assets/speedway/velocity-legend.png";
+import accumulatedDragImg from "@/assets/speedway/accumulated-drag.png";
+
 const ImagePlaceholder = ({ label, aspect = "video" }: { label: string; aspect?: "video" | "square" }) => (
   <div
     className={`w-full rounded-lg border border-dashed border-border bg-muted/50 flex items-center justify-center text-sm text-muted-foreground p-6 text-center ${
@@ -18,11 +29,80 @@ const ImagePlaceholder = ({ label, aspect = "video" }: { label: string; aspect?:
   </div>
 );
 
+interface FigureProps {
+  src: string;
+  legendSrc?: string;
+  alt: string;
+  caption: string;
+  figureNumber: number;
+}
+
+const Figure = ({ src, legendSrc, alt, caption, figureNumber }: FigureProps) => (
+  <figure className="my-6">
+    {legendSrc && (
+      <div className="flex justify-center mb-2">
+        <img src={legendSrc} alt={`${alt} legend`} className="max-h-12 object-contain" />
+      </div>
+    )}
+    <div className="w-full rounded-lg overflow-hidden border border-border">
+      <img src={src} alt={alt} className="w-full h-auto object-contain" />
+    </div>
+    <figcaption className="mt-2 text-xs text-muted-foreground text-center italic">
+      Figure {figureNumber}: {caption}
+    </figcaption>
+  </figure>
+);
+
+// Mapping for speedway methodology images by placeholder label
+const speedwayMethodologyImages: Record<string, { src: string; caption: string }> = {
+  "3D Scanned Motorcycle Geometry": {
+    src: geometryImg,
+    caption: "Geometry of speedway and rider. Side view.",
+  },
+  "Computational Domain and Boundary Conditions": {
+    src: domainImg,
+    caption: "The dimensions of the computational domain used in the CFD simulations, where L = 2070 mm, H = 1520 mm, and W = 830 mm.",
+  },
+  "Polyhedral Mesh Detail and Prism Layers": {
+    src: meshPrismImg,
+    caption: "A zoomed-in representation of the prism layers used in the simulation. These layers are crucial for accurately capturing boundary layers.",
+  },
+};
+
+const speedwayValidationImages: Record<string, { src: string; caption: string }> = {
+  "Wind Tunnel Test Setup": {
+    src: windTunnelSetupImg,
+    caption: "3D-printed model used for wind tunnel testing. The model was printed in PLA plastic and split into four parts for manufacturing feasibility.",
+  },
+  "1:6 Scale 3D-Printed Model in Wind Tunnel": {
+    src: windTunnelSetupImg,
+    caption: "3D-printed model used for wind tunnel testing. The model was printed in PLA plastic and split into four parts for manufacturing feasibility.",
+  },
+};
+
+const speedwayResultsImages: Record<string, { src: string; legendSrc?: string; caption: string }> = {
+  "Pressure Coefficient Contour (Mid-plane)": {
+    src: cpContourImg,
+    legendSrc: cpLegendImg,
+    caption: "Contour of pressure coefficient on mid-plane in flow direction. The mid-plane pressure coefficient contour illustrates pressure variations along the centreline of the speedway motorcycle. It highlights stagnation zones, areas of low pressure, and key separation regions.",
+  },
+  "Mean Velocity Field": {
+    src: meanVelocityImg,
+    legendSrc: velocityLegendImg,
+    caption: "Contour of mean velocity on mid-plane in flow direction. It highlights high-velocity regions around the helmet and front fairing, along with low-velocity wake areas behind the rider.",
+  },
+  "Accumulated Drag Force Along Longitudinal Axis": {
+    src: accumulatedDragImg,
+    caption: "Comparison of accumulated drag forces along the speedway profile.",
+  },
+};
+
 const ProjectPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   useEffect(() => { window.scrollTo(0, 0); }, [id]);
   const project = projectsData.find((p) => p.id === id);
+  const isSpeedway = id === "speedway-aerodynamics";
 
   if (!project) {
     return (
@@ -37,6 +117,10 @@ const ProjectPage = () => {
 
   const methodPlaceholders = project.methodologyPlaceholders || ["CFD Mesh Visualization", "Boundary Conditions Setup"];
   const resPlaceholders = project.resultsPlaceholders || ["Pressure Contour Plot", "Velocity Streamlines", "Before / After Comparison"];
+
+  // Global figure counter
+  let figureCount = 0;
+  const nextFigure = () => ++figureCount;
 
   return (
     <div className="min-h-screen bg-background">
@@ -89,11 +173,14 @@ const ProjectPage = () => {
                 <h2 className="text-xl font-semibold mb-4 text-primary">Methodology</h2>
                 <p className="text-muted-foreground leading-relaxed">{project.methodology}</p>
 
-                {/* Placeholders interspersed after text */}
                 <div className="mt-6 space-y-4">
-                  {methodPlaceholders.map((label, i) => (
-                    <ImagePlaceholder key={i} label={label} />
-                  ))}
+                  {methodPlaceholders.map((label, i) => {
+                    const imgData = isSpeedway ? speedwayMethodologyImages[label] : undefined;
+                    if (imgData) {
+                      return <Figure key={i} src={imgData.src} alt={label} caption={imgData.caption} figureNumber={nextFigure()} />;
+                    }
+                    return <ImagePlaceholder key={i} label={label} />;
+                  })}
                 </div>
 
                 {/* Convergence Studies as subsection */}
@@ -122,9 +209,13 @@ const ProjectPage = () => {
                   <p className="text-muted-foreground leading-relaxed">{project.validation}</p>
                   {project.validationPlaceholders && project.validationPlaceholders.length > 0 && (
                     <div className="mt-6 space-y-4">
-                      {project.validationPlaceholders.map((label, i) => (
-                        <ImagePlaceholder key={i} label={label} />
-                      ))}
+                      {project.validationPlaceholders.map((label, i) => {
+                        const imgData = isSpeedway ? speedwayValidationImages[label] : undefined;
+                        if (imgData) {
+                          return <Figure key={i} src={imgData.src} alt={label} caption={imgData.caption} figureNumber={nextFigure()} />;
+                        }
+                        return <ImagePlaceholder key={i} label={label} />;
+                      })}
                     </div>
                   )}
                 </section>
@@ -135,9 +226,13 @@ const ProjectPage = () => {
                 <h2 className="text-xl font-semibold mb-4 text-primary">Results & Impact</h2>
                 <p className="text-muted-foreground leading-relaxed">{project.results}</p>
                 <div className="mt-6 space-y-4">
-                  {resPlaceholders.map((label, i) => (
-                    <ImagePlaceholder key={i} label={label} />
-                  ))}
+                  {resPlaceholders.map((label, i) => {
+                    const imgData = isSpeedway ? speedwayResultsImages[label] : undefined;
+                    if (imgData) {
+                      return <Figure key={i} src={imgData.src} legendSrc={imgData.legendSrc} alt={label} caption={imgData.caption} figureNumber={nextFigure()} />;
+                    }
+                    return <ImagePlaceholder key={i} label={label} />;
+                  })}
                 </div>
               </section>
 
