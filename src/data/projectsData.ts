@@ -123,8 +123,8 @@ export const projectsData: Project[] = [
     title: "Micromobility Stations",
     description: "Product development for Vadecity smart bike stations. Optimization of mechanical assemblies.",
     image: projectMicromobility,
-    date: "April 2023 — August 2024",
-    role: "Mechanical Design Engineer — Vadecity, Barcelona",
+    date: "April 2023 to August 2024",
+    role: "Mechanical Design Engineer, Vadecity, Barcelona",
     overview:
       "At Vadecity, I led the mechanical design of smart micromobility docking stations for urban environments. The product integrates IoT sensors, locking mechanisms, and modular frames designed for rapid deployment in European cities.",
     objectives: [
