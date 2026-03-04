@@ -1,4 +1,4 @@
-import projectSpeedway from "@/assets/project-speedway.jpg";
+import projectMeanVelocity from "@/assets/speedway/mean-velocity.png";
 import projectIndustrial from "@/assets/project-industrial.jpg";
 import projectMicromobility from "@/assets/project-micromobility.jpg";
 
