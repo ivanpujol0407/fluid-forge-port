@@ -7,6 +7,18 @@ import { Badge } from "@/components/ui/badge";
 import { projectsData } from "@/data/projectsData";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  ReferenceLine,
+  Scatter,
+  ComposedChart,
+} from "recharts";
 
 // Speedway images
 import geometryImg from "@/assets/speedway/geometry.png";
@@ -18,6 +30,15 @@ import cpLegendImg from "@/assets/speedway/cp-legend.png";
 import meanVelocityImg from "@/assets/speedway/mean-velocity.png";
 import velocityLegendImg from "@/assets/speedway/velocity-legend.png";
 import accumulatedDragImg from "@/assets/speedway/accumulated-drag.png";
+import vorticityPlane1 from "@/assets/speedway/vorticity-plane1.png";
+import vorticityPlane2 from "@/assets/speedway/vorticity-plane2.png";
+import vorticityPlane3 from "@/assets/speedway/vorticity-plane3.png";
+import vorticityPlane4 from "@/assets/speedway/vorticity-plane4.png";
+import vorticityLegend from "@/assets/speedway/vorticity-legend.png";
+import cpNewDesign from "@/assets/speedway/cp-new-design.png";
+import lambda2New from "@/assets/speedway/lambda2-new.png";
+import lambda2Standard from "@/assets/speedway/lambda2-standard.png";
+import lambda2Legend from "@/assets/speedway/lambda2-legend.png";
 
 const ImagePlaceholder = ({ label, aspect = "video" }: { label: string; aspect?: "video" | "square" }) => (
   <div
@@ -44,11 +65,129 @@ const Figure = ({ src, legendSrc, alt, caption, figureNumber }: FigureProps) => 
         <img src={legendSrc} alt={`${alt} legend`} className="max-h-12 object-contain" />
       </div>
     )}
-    <div className="w-full rounded-lg overflow-hidden border border-border">
+    <div className="w-full max-w-2xl mx-auto rounded-lg overflow-hidden border border-border">
       <img src={src} alt={alt} className="w-full h-auto object-contain" />
     </div>
-    <figcaption className="mt-2 text-xs text-muted-foreground text-center italic">
-      Figure {figureNumber}: {caption}
+    <figcaption className="mt-2 text-sm text-muted-foreground text-center">
+      <span style={{ color: "#63ab85", fontWeight: 600 }}>Figure {figureNumber}:</span> {caption}
+    </figcaption>
+  </figure>
+);
+
+interface MultiFigureProps {
+  images: { src: string; alt: string }[];
+  legendSrc?: string;
+  caption: string;
+  figureNumber: number;
+}
+
+const MultiFigure = ({ images, legendSrc, caption, figureNumber }: MultiFigureProps) => (
+  <figure className="my-6">
+    {legendSrc && (
+      <div className="flex justify-center mb-2">
+        <img src={legendSrc} alt="legend" className="max-h-12 object-contain" />
+      </div>
+    )}
+    <div className={`grid gap-2 ${images.length === 4 ? "grid-cols-4" : images.length === 2 ? "grid-cols-2" : "grid-cols-1"}`}>
+      {images.map((img, i) => (
+        <div key={i} className="rounded-lg overflow-hidden border border-border">
+          <img src={img.src} alt={img.alt} className="w-full h-auto object-contain" />
+        </div>
+      ))}
+    </div>
+    <figcaption className="mt-2 text-sm text-muted-foreground text-center">
+      <span style={{ color: "#63ab85", fontWeight: 600 }}>Figure {figureNumber}:</span> {caption}
+    </figcaption>
+  </figure>
+);
+
+// Base size convergence data
+const baseSizeData = [
+  { baseSize: 80, cdA: 0.4975 },
+  { baseSize: 90, cdA: 0.4983 },
+  { baseSize: 100, cdA: 0.4965 },
+  { baseSize: 110, cdA: 0.4963 },
+  { baseSize: 120, cdA: 0.4950 },
+  { baseSize: 130, cdA: 0.4935 },
+];
+
+// Fitted line: f(x) = -0.00009x + 0.506
+const fittedLineData = [
+  { baseSize: 70, fitted: -0.00009 * 70 + 0.506 },
+  { baseSize: 140, fitted: -0.00009 * 140 + 0.506 },
+];
+
+const BaseSizeChart = ({ figureNumber }: { figureNumber: number }) => (
+  <figure className="my-6">
+    <div className="w-full max-w-2xl mx-auto rounded-lg border border-border bg-card p-4">
+      <ResponsiveContainer width="100%" height={350}>
+        <ComposedChart
+          data={baseSizeData}
+          margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+          <XAxis
+            dataKey="baseSize"
+            type="number"
+            domain={[70, 140]}
+            tickCount={8}
+            label={{ value: "Base size (mm)", position: "insideBottom", offset: -10, style: { fill: "hsl(var(--muted-foreground))", fontSize: 13 } }}
+            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+            stroke="hsl(var(--muted-foreground))"
+          />
+          <YAxis
+            domain={[0.492, 0.502]}
+            tickCount={6}
+            label={{ value: "CᴅA", angle: -90, position: "insideLeft", offset: 0, style: { fill: "hsl(var(--muted-foreground))", fontSize: 13 } }}
+            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
+            stroke="hsl(var(--muted-foreground))"
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: "hsl(var(--card))",
+              border: "1px solid hsl(var(--border))",
+              borderRadius: 8,
+              color: "hsl(var(--foreground))",
+            }}
+            formatter={(value: number) => [value.toFixed(4), "CᴅA"]}
+            labelFormatter={(label) => `Base size: ${label} mm`}
+          />
+          {/* Fitted line */}
+          <Line
+            data={fittedLineData}
+            dataKey="fitted"
+            type="linear"
+            stroke="hsl(var(--muted-foreground))"
+            strokeWidth={1.5}
+            dot={false}
+            name="Fitted"
+            legendType="none"
+          />
+          {/* Data points */}
+          <Scatter
+            dataKey="cdA"
+            fill="#8b1a1a"
+            stroke="#8b1a1a"
+            r={5}
+            name="CᴅA"
+          />
+          {/* Dashed reference line at 110mm value */}
+          <ReferenceLine
+            y={0.4963}
+            stroke="hsl(var(--muted-foreground))"
+            strokeDasharray="6 4"
+            strokeWidth={1}
+          />
+        </ComposedChart>
+      </ResponsiveContainer>
+      {/* Annotations */}
+      <div className="flex justify-between px-12 text-xs text-muted-foreground -mt-2">
+        <span>0.25%</span>
+        <span>0.57%</span>
+      </div>
+    </div>
+    <figcaption className="mt-2 text-sm text-muted-foreground text-center">
+      <span style={{ color: "#63ab85", fontWeight: 600 }}>Figure {figureNumber}:</span> Drag area vs Base size. Percentage errors comparing the selected base size with the finest and coarsest mesh cases. Fitted function: f(x) = -0.00009x + 0.506
     </figcaption>
   </figure>
 );
@@ -95,7 +234,16 @@ const speedwayResultsImages: Record<string, { src: string; legendSrc?: string; c
     src: accumulatedDragImg,
     caption: "Comparison of accumulated drag forces along the speedway profile.",
   },
+  "Streamwise Pressure Coefficient, New vs Original Design": {
+    src: cpNewDesign,
+    legendSrc: cpLegendImg,
+    caption: "Streamwise pressure coefficient for the new front design.",
+  },
 };
+
+// Special multi-image entries
+const VORTICITY_KEY = "Vorticity Contours on YZ Planes";
+const LAMBDA2_KEY = "λ₂ Vortex Structures Comparison";
 
 const ProjectPage = () => {
   const { id } = useParams();
@@ -193,7 +341,11 @@ const ProjectPage = () => {
                           <h4 className="text-base font-medium mb-3">{item.title}</h4>
                           <p className="text-sm text-muted-foreground leading-relaxed">{item.content}</p>
                           <div className="mt-4">
-                            <ImagePlaceholder label={`${item.title} Chart / Figure`} />
+                            {isSpeedway && item.title === "Mesh Convergence: Base Size" ? (
+                              <BaseSizeChart figureNumber={nextFigure()} />
+                            ) : (
+                              <ImagePlaceholder label={`${item.title} Chart / Figure`} />
+                            )}
                           </div>
                         </div>
                       ))}
@@ -227,6 +379,38 @@ const ProjectPage = () => {
                 <p className="text-muted-foreground leading-relaxed">{project.results}</p>
                 <div className="mt-6 space-y-4">
                   {resPlaceholders.map((label, i) => {
+                    // Vorticity: 4 images side by side
+                    if (isSpeedway && label === VORTICITY_KEY) {
+                      return (
+                        <MultiFigure
+                          key={i}
+                          images={[
+                            { src: vorticityPlane1, alt: "Vorticity plane 1" },
+                            { src: vorticityPlane2, alt: "Vorticity plane 2" },
+                            { src: vorticityPlane3, alt: "Vorticity plane 3" },
+                            { src: vorticityPlane4, alt: "Vorticity plane 4" },
+                          ]}
+                          legendSrc={vorticityLegend}
+                          caption="Time-averaged axial vorticity contours with line integral convolution of the in-plane velocity at YZ planes. These vorticity contours show vortex structures forming around the front fairing, handlebar and front wheel."
+                          figureNumber={nextFigure()}
+                        />
+                      );
+                    }
+                    // Lambda2: 2 images side by side
+                    if (isSpeedway && label === LAMBDA2_KEY) {
+                      return (
+                        <MultiFigure
+                          key={i}
+                          images={[
+                            { src: lambda2New, alt: "Lambda2 new design" },
+                            { src: lambda2Standard, alt: "Lambda2 standard design" },
+                          ]}
+                          legendSrc={lambda2Legend}
+                          caption="Instantaneous vortex structures visualised with λ₂ criterion. Comparison between new front design and standard front fairing."
+                          figureNumber={nextFigure()}
+                        />
+                      );
+                    }
                     const imgData = isSpeedway ? speedwayResultsImages[label] : undefined;
                     if (imgData) {
                       return <Figure key={i} src={imgData.src} legendSrc={imgData.legendSrc} alt={label} caption={imgData.caption} figureNumber={nextFigure()} />;
