@@ -207,7 +207,7 @@ const PrismLayerChart = ({ figureNumber }: { figureNumber: number }) => (
             tick={chartAxisStyle}
             stroke="hsl(var(--muted-foreground))"
           />
-          <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number) => [value.toFixed(4), "CᴅA"]} labelFormatter={(l) => `Prism layers: ${l}`} />
+          <Tooltip contentStyle={chartTooltipStyle} formatter={(value: number) => [value.toFixed(4), "CᴅA"]} labelFormatter={(l) => `Prism layers: ${l}`} cursor={{ stroke: "hsl(var(--muted-foreground))", strokeDasharray: "4 4" }} />
           <Scatter dataKey="cdA" fill="hsl(var(--primary))" stroke="hsl(var(--primary))" r={5} name="CᴅA" />
         </ComposedChart>
       </ResponsiveContainer>
