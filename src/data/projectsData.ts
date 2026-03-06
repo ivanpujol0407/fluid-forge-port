@@ -1,6 +1,5 @@
 import projectMeanVelocity from "@/assets/speedway/mean-velocity.png";
-import projectIndustrial from "@/assets/project-industrial.jpg";
-import projectMicromobility from "@/assets/project-micromobility.jpg";
+// Placeholder images for new projects - replace with actual images later
 
 export interface Project {
   id: string;
