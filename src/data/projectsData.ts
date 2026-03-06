@@ -12,7 +12,9 @@ export interface Project {
   overview: string;
   objectives: string[];
   methodology: string;
+  methodologySections?: { title: string; content: string; placeholders?: string[] }[];
   results: string;
+  resultsSections?: { title: string; content: string; placeholders?: string[] }[];
   lessons: string;
   futureWork?: string;
   supplementary?: {
