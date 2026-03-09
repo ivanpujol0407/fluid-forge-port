@@ -588,13 +588,9 @@ const ProjectPage = () => {
                 <p className="text-muted-foreground leading-relaxed">{project.methodology}</p>
 
                 <div className="mt-6 space-y-4">
-                  {methodPlaceholders.map((label, i) => {
-                    const imgData = isSpeedway ? speedwayMethodologyImages[label] : undefined;
-                    if (imgData) {
-                      return <Figure key={i} src={imgData.src} alt={label} caption={imgData.caption} figureNumber={nextFigure()} />;
-                    }
-                    return <ImagePlaceholder key={i} label={label} />;
-                  })}
+                  {methodPlaceholders.map((label, i) => (
+                    <div key={i}>{resolveImage(label, nextFigure)}</div>
+                  ))}
                 </div>
 
                 {/* Methodology subsections */}
@@ -607,7 +603,7 @@ const ProjectPage = () => {
                         {sec.placeholders && sec.placeholders.length > 0 &&
                     <div className="mt-4 space-y-4">
                             {sec.placeholders.map((label, j) =>
-                        <ImagePlaceholder key={j} label={label} />
+                        <div key={j}>{resolveImage(label, nextFigure)}</div>
                         )}
                           </div>
                     }
@@ -616,8 +612,8 @@ const ProjectPage = () => {
                   </div>
                 }
 
-                {/* Convergence Studies / Additional Details */}
-                {project.supplementary && project.supplementary.length > 0 &&
+                {/* Convergence Studies (speedway only) / supplementary rendered in methodology */}
+                {isSpeedway && project.supplementary && project.supplementary.length > 0 &&
                 <div className="mt-10">
                     <h3 className="text-lg font-semibold mb-6">{isSpeedway ? "Convergence Studies" : "Additional Details"}</h3>
                     <div className="space-y-8">
