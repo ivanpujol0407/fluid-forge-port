@@ -375,10 +375,6 @@ const gripperResultsImages: Record<string, {src: string; caption: string;}> = {
     src: gripperDisplacement,
     caption: "Displacement vector field under vacuum loading (F = 20.77 N). Maximum displacement of 25.99 mm at the tips, nearly closing the 26 mm gap between the arms."
   },
-  "Principal Stress σ_I Distribution": {
-    src: gripperSigma1,
-    caption: "Maximum principal stress (σ_I) distribution under vacuum loading. Peak tensile stress of 13.99 MPa occurs at the outer curvature, well below the 110 MPa elastic limit (γ_s = 6.67)."
-  },
   "Displacement Field — Extreme Pinch": {
     src: gripperExtremePinch,
     caption: "Displacement vector field under extreme pinch force (F = 60 N). Maximum displacement of 3.25 mm at the tips confirms the arms remain well separated."
@@ -386,7 +382,51 @@ const gripperResultsImages: Record<string, {src: string; caption: string;}> = {
   "Displacement Field — Destructive Test": {
     src: gripperDestructive,
     caption: "Displacement vector field at destructive load (F = 506.31 N). Maximum displacement of 27.42 mm exceeds the 26 mm gap — the arms would make contact before full elastic failure."
-  }
+  },
+  "Stress at Elastic Limit σ_III": {
+    src: gripperStressElasticLimit,
+    caption: "Compressive principal stress σ_III at the elastic limit (F = 506.31 N). The maximum compressive stress reaches exactly −110 MPa at the inner curvature, confirming onset of elastic failure."
+  },
+  "Vacuum Test Photo": {
+    src: gripperVacuumTestPhoto,
+    caption: "Physical vacuum test setup. The manufactured PMMA gripper is loaded in a universal testing machine to verify the vacuum force prediction of F = 20.77 N."
+  },
+  "Destructive Test Result Photo": {
+    src: gripperDestructiveTestResult,
+    caption: "Gripper specimens after destructive testing. The fractured gripper (right) shows brittle failure consistent with PMMA behaviour — clean fracture with no plastic deformation, confirming the Rankine failure criterion assumption."
+  },
+};
+
+// Multi-figure mappings for gripper (side-by-side pairs)
+const gripperMultiFigures: Record<string, { images: {src: string; alt: string}[]; caption: string }> = {
+  "Mesh: Unrefined vs Refined": {
+    images: [
+      { src: gripperUnrefinedMesh, alt: "Unrefined mesh" },
+      { src: gripperRefinedMesh, alt: "Refined mesh" },
+    ],
+    caption: "Mesh comparison: unrefined mesh (left, ~1,200 elements at 2 mm element size) vs level-1 h-refinement at the curved region (right, ~4,800 elements). The refinement targets the stress concentration zone at the U-bend."
+  },
+  "Stress: Unrefined vs Refined": {
+    images: [
+      { src: gripperUnrefinedResults, alt: "Unrefined stress results" },
+      { src: gripperRefinedResults, alt: "Refined stress results" },
+    ],
+    caption: "Principal stress σ_I results comparison: unrefined mesh (left, σ_I,max = 1.348 MPa) vs refined mesh (right, σ_I,max = 1.335 MPa). The 0.94% difference confirms mesh independence."
+  },
+  "Principal Stress σ_I and σ_III — Vacuum": {
+    images: [
+      { src: gripperSigma1, alt: "Principal stress σ_I" },
+      { src: gripperSigma3, alt: "Principal stress σ_III" },
+    ],
+    caption: "Principal stress distributions under vacuum loading (F = 20.77 N). Left: σ_I (tensile, max 14.00 MPa at outer curve). Right: σ_III (compressive, min −16.48 MPa at inner curve). The Rankine equivalent stress is σ_eq = 16.48 MPa, giving γ_s = 6.67."
+  },
+  "Principal Stress σ_I and σ_III — Extreme Pinch": {
+    images: [
+      { src: gripperStress60nSigma1, alt: "σ_I under 60 N" },
+      { src: gripperStress60nSigma3, alt: "σ_III under 60 N" },
+    ],
+    caption: "Principal stress distributions under extreme pinch force (F = 60 N). Left: σ_I (tensile, max 12.11 MPa). Right: σ_III (compressive, min −13.04 MPa). Safety factor γ_s = 8.44, confirming safe operation under maximum human force."
+  },
 };
 
 const gripperSupplementaryImages: Record<string, {src: string; caption: string;}> = {
