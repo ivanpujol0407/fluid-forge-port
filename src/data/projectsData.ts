@@ -124,7 +124,7 @@ export const projectsData: Project[] = [
       {
         title: "Mesh Convergence Study",
         content: "The mesh was generated with a global element size of 2 mm, producing approximately 1,200 elements. To verify mesh independence, a finer mesh with element size 1 mm (~4,800 elements) was also tested. Under a reference load of F = 2 N, the coarse mesh yielded σ_I,max = 1.348 MPa while the fine mesh gave σ_I,max = 1.344 MPa — a relative error of only 0.30%, confirming mesh independence. A level-1 mesh refinement (h-refinement) was additionally applied to the curved region where stress concentrations are expected. The refined mesh produced σ_I,max = 1.335 MPa compared to the unrefined value of 1.348 MPa — an error of 0.94%. Since both values are within 1%, the standard mesh with element size 2 mm was deemed sufficient for all subsequent analyses.",
-        placeholders: ["Mesh Visualization (Unrefined)", "Mesh with Level-1 Refinement at Curved Region", "Stress Comparison: Refined vs Unrefined Mesh"]
+        placeholders: ["Mesh: Unrefined vs Refined", "Stress: Unrefined vs Refined"]
       },
       {
         title: "Linearity Validation",
