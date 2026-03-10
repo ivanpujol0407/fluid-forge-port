@@ -580,6 +580,8 @@ const ProjectPage = () => {
       if (img) return <Figure src={img.src} alt={label} caption={img.caption} figureNumber={figCounter()} />;
     }
     if (isGripper) {
+      const multi = gripperMultiFigures[label];
+      if (multi) return <MultiFigure images={multi.images} caption={multi.caption} figureNumber={figCounter()} />;
       const img = gripperMethodologyImages[label] || gripperResultsImages[label] || gripperSupplementaryImages[label];
       if (img) return <Figure src={img.src} alt={label} caption={img.caption} figureNumber={figCounter()} />;
     }
