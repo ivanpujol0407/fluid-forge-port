@@ -1,6 +1,6 @@
 import projectMeanVelocity from "@/assets/speedway/mean-velocity.png";
 import gripperMainImg from "@/assets/gripper/main.png";
-import gearboxMainImg from "@/assets/gearbox/Disseny.png";
+import gearboxMainImg from "@/assets/gearbox/Disseny_main.png";
 
 // Placeholder images for new projects - replace with actual images later
 
