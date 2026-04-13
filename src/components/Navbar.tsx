@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Download } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -6,22 +6,59 @@ import { useNavigate, useLocation } from "react-router-dom";
 const navLinks = [
   { label: "About", href: "#about" },
   { label: "Projects", href: "#projects" },
-  { label: "Tools", href: "#tools" },
   { label: "Skills", href: "#skills" },
+  { label: "Tools", href: "#tools" },
   { label: "Contact", href: "#contact" },
 ];
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>("");
+  const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Scroll shadow
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Close mobile menu on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMobileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Active section tracking via IntersectionObserver
+  useEffect(() => {
+    if (location.pathname !== "/") return;
+
+    const sectionIds = navLinks.map((l) => l.href.replace("#", ""));
+    const observers: IntersectionObserver[] = [];
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) setActiveSection(id);
+        },
+        { rootMargin: "-40% 0px -55% 0px" }
+      );
+      observer.observe(el);
+      observers.push(observer);
+    });
+
+    return () => observers.forEach((o) => o.disconnect());
+  }, [location.pathname]);
 
   const handleNavClick = (href: string) => {
     setMobileOpen(false);
@@ -37,6 +74,7 @@ const Navbar = () => {
 
   return (
     <nav
+      ref={menuRef}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
           ? "bg-background/80 backdrop-blur-lg border-b border-border"
@@ -56,15 +94,23 @@ const Navbar = () => {
 
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <button
-              key={link.href}
-              onClick={() => handleNavClick(link.href)}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {link.label}
-            </button>
-          ))}
+          {navLinks.map((link) => {
+            const sectionId = link.href.replace("#", "");
+            const isActive = activeSection === sectionId && location.pathname === "/";
+            return (
+              <button
+                key={link.href}
+                onClick={() => handleNavClick(link.href)}
+                className={`text-sm transition-colors ${
+                  isActive
+                    ? "text-primary font-medium"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {link.label}
+              </button>
+            );
+          })}
           <Button size="sm" asChild>
             <a href="/CV_Ivan_Pujol.pdf" target="_blank" rel="noopener noreferrer">
               <Download className="mr-2 h-4 w-4" />
@@ -85,15 +131,23 @@ const Navbar = () => {
       {/* Mobile menu */}
       {mobileOpen && (
         <div className="md:hidden bg-background/95 backdrop-blur-lg border-b border-border px-4 pb-4">
-          {navLinks.map((link) => (
-            <button
-              key={link.href}
-              onClick={() => handleNavClick(link.href)}
-              className="block w-full text-left py-3 text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {link.label}
-            </button>
-          ))}
+          {navLinks.map((link) => {
+            const sectionId = link.href.replace("#", "");
+            const isActive = activeSection === sectionId && location.pathname === "/";
+            return (
+              <button
+                key={link.href}
+                onClick={() => handleNavClick(link.href)}
+                className={`block w-full text-left py-3 transition-colors ${
+                  isActive
+                    ? "text-primary font-medium"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {link.label}
+              </button>
+            );
+          })}
           <Button size="sm" className="w-full mt-2" asChild>
             <a href="/CV_Ivan_Pujol.pdf" target="_blank" rel="noopener noreferrer">
               <Download className="mr-2 h-4 w-4" />
